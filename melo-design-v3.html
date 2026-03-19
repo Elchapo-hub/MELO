@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Melo Design — Creative Studio & Smart Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --y:#E8FF47;--yd:#c8e030;--p:#7C6FFF;--pd:#6a5fe0;
+  --r:#FF6B6B;--o:#FF9F43;--t:#4ECDC4;--g:#55D86A;
+  --dk:#0A0A0A;--dk2:#111;--dk3:#1A1A1A;--dk4:#242424;--dk5:#2E2E2E;
+  --mu:#888;--mu2:#555;--wh:#FAFAFA;--wh2:#E8E8E8;
+  --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+  --tr:.3s cubic-bezier(.4,0,.2,1)
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--dk);color:var(--wh);font-family:var(--fb);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:var(--fb);border:none;outline:none}
+input,textarea,select{font-family:var(--fb)}
+.c{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:999;padding:18px 0;transition:all .3s}
+.nav.up{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.ni{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:6px;font-family:var(--fd);font-size:1.35rem;font-weight:800;letter-spacing:-.03em;cursor:pointer}
+.lm{width:30px;height:30px;background:var(--y);color:var(--dk);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800}
+.nls{display:flex;align-items:center;gap:1px}
+.nl{padding:7px 12px;border-radius:100px;font-size:.82rem;font-weight:500;color:var(--mu);transition:var(--tr);cursor:pointer;white-space:nowrap}
+.nl:hover,.nl.on{color:var(--wh);background:var(--dk3)}
+.nb{background:var(--p);color:#fff;font-size:.58rem;font-weight:800;padding:2px 5px;border-radius:4px;margin-left:3px;vertical-align:super}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:100px;font-weight:600;font-size:.85rem;transition:var(--tr);white-space:nowrap;cursor:pointer;border:none}
+.by{background:var(--y);color:var(--dk)}.by:hover{background:var(--yd);transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,255,71,.28)}
+.bp{background:var(--p);color:#fff}.bp:hover{background:var(--pd);transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,111,255,.3)}
+.bo{background:transparent;border:1.5px solid var(--dk5);color:var(--wh)}.bo:hover{border-color:var(--y);color:var(--y);transform:translateY(-2px)}
+.bg{background:var(--dk3);color:var(--wh);border:1px solid var(--dk5)}.bg:hover{background:var(--dk4);transform:translateY(-2px)}
+.lg{padding:15px 30px;font-size:.95rem}
+.sm{padding:8px 16px;font-size:.78rem}
+.xs{padding:6px 12px;font-size:.73rem}
+
+/* PAGES */
+.page{display:none;animation:fadeUp .4s ease both}
+.page.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════════
+   CINEMATIC VIDEO HERO
+══════════════════════════════════════ */
+.hero{position:relative;height:100vh;min-height:700px;overflow:hidden;display:flex;align-items:center}
+
+/* Fullscreen canvas-based generative video wallpaper */
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* Dark overlay with gradient */
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    135deg,
+    rgba(10,10,10,.85) 0%,
+    rgba(10,10,10,.5) 50%,
+    rgba(10,10,10,.3) 100%
+  );
+  z-index:1
+}
+.hero-overlay-bottom{
+  position:absolute;bottom:0;left:0;right:0;height:40%;
+  background:linear-gradient(to bottom,transparent,var(--dk));
+  z-index:2
+}
+
+/* Slide reel of background scenes */
+.hero-scenes{position:absolute;inset:0;z-index:0}
+.hero-scene{
+  position:absolute;inset:0;opacity:0;
+  transition:opacity 1.5s cubic-bezier(.4,0,.2,1);
+  background-size:cover;background-position:center
+}
+.hero-scene.active{opacity:1}
+
+/* Content */
+.hero-content{
+  position:relative;z-index:3;
+  padding:0 24px;max-width:860px;
+  animation:heroEntrance 1.2s cubic-bezier(.22,1,.36,1) both;
+  animation-delay:.3s
+}
+@keyframes heroEntrance{
+  from{opacity:0;transform:translateY(40px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:9px;
+  background:rgba(232,255,71,.07);border:1px solid rgba(232,255,71,.2);
+  border-radius:100px;padding:6px 14px;margin-bottom:28px;
+  animation:fadeUp .6s ease .7s both
+}
+.hb-dot{width:7px;height:7px;border-radius:50%;background:var(--y);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,255,71,.4)}70%{box-shadow:0 0 0 8px rgba(232,255,71,0)}}
+.hb-txt{font-family:var(--fd);font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--y)}
+.hb-sep{width:1px;height:12px;background:rgba(232,255,71,.25)}
+.hb-sub{font-size:.72rem;color:rgba(255,255,255,.55)}
+
+.hero-title{
+  font-family:var(--fd);
+  font-size:clamp(3rem,8vw,7rem);
+  font-weight:800;line-height:.92;letter-spacing:-.04em;
+  margin-bottom:24px;
+  animation:fadeUp .6s ease .9s both
+}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .inner{display:block;animation:slideUp .7s cubic-bezier(.22,1,.36,1) both}
+.line:nth-child(1) .inner{animation-delay:.9s}
+.line:nth-child(2) .inner{animation-delay:1.05s}
+.line:nth-child(3) .inner{animation-delay:1.2s}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.hero-title .ac{color:var(--y)}
+
+.hero-sub{
+  font-size:1.05rem;color:rgba(255,255,255,.65);
+  max-width:540px;margin-bottom:36px;line-height:1.75;
+  animation:fadeUp .6s ease 1.3s both
+}
+
+.hero-btns{
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:52px;
+  animation:fadeUp .6s ease 1.4s both
+}
+
+.hero-stats{
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  animation:fadeUp .6s ease 1.5s both
+}
+.hs{display:flex;flex-direction:column;gap:2px}
+.hs-n{font-family:var(--fd);font-size:1.8rem;font-weight:800;letter-spacing:-.03em}
+.hs-l{font-size:.68rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em}
+.hs-div{width:1px;height:32px;background:rgba(255,255,255,.12)}
+
+/* Scene indicator dots */
+.hero-dots{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;gap:8px;z-index:4
+}
+.hdot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,.3);cursor:pointer;
+  transition:all .3s ease
+}
+.hdot.on{background:var(--y);width:24px;border-radius:3px}
+
+/* Scrolling text ticker */
+.hero-ticker{
+  position:absolute;bottom:80px;left:0;right:0;z-index:4;
+  overflow:hidden;pointer-events:none
+}
+.ticker-inner{
+  display:flex;gap:48px;white-space:nowrap;
+  animation:ticker 20s linear infinite
+}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{
+  font-family:var(--fd);font-size:.7rem;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.2)
+}
+.ticker-sep{color:var(--y);opacity:.4}
+
+/* ══════════════════════════════════════
+   PORTFOLIO PAGE
+══════════════════════════════════════ */
+.ph{padding:146px 0 64px;position:relative;overflow:hidden}
+.ph::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 45% 55% at 82% 50%,rgba(232,255,71,.04) 0%,transparent 70%);pointer-events:none}
+.lbl{font-family:var(--fd);font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--y)}
+.d1{font-family:var(--fd);font-size:clamp(2.6rem,6.5vw,5.5rem);font-weight:800;line-height:.95;letter-spacing:-.03em}
+
+/* Filter bar */
+.fb{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:40px;padding:5px;background:var(--dk3);border:1px solid var(--dk5);border-radius:100px;width:fit-content}
+.fbb{padding:8px 18px;border-radius:100px;font-size:.8rem;font-weight:500;background:transparent;color:var(--mu);border:none;cursor:pointer;transition:var(--tr);font-family:var(--fb)}
+.fbb:hover{color:var(--wh);background:var(--dk5)}
+.fbb.on{background:var(--y);color:var(--dk);font-weight:700}
+
+/* Masonry / grid */
+.port-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  grid-auto-rows:280px
+}
+.port-grid .wide{grid-column:span 2}
+.port-grid .tall{grid-row:span 2}
+
+/* Portfolio Card */
+.pcard{
+  position:relative;border-radius:20px;overflow:hidden;
+  cursor:pointer;background:var(--dk3);
+  transform:translateY(0);
+  transition:transform .5s cubic-bezier(.22,1,.36,1),box-shadow .5s ease
+}
+.pcard:hover{transform:translateY(-8px);box-shadow:0 28px 60px rgba(0,0,0,.6)}
+.pcard:hover .pcard-img{transform:scale(1.08)}
+.pcard:hover .pcard-overlay{opacity:1}
+.pcard:hover .pcard-info{transform:translateY(0);opacity:1}
+.pcard:hover .pcard-tag{opacity:1;transform:translateY(0)}
+
+/* The image */
+.pcard-img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;transition:transform .7s cubic-bezier(.22,1,.36,1)
+}
+/* Fallback canvas art when no img */
+.pcard-art{position:absolute;inset:0;width:100%;height:100%}
+
+/* Gradient overlay always present slightly */
+.pcard-base-gradient{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 60%);
+  z-index:1
+}
+
+/* Hover overlay */
+.pcard-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.55);
+  opacity:0;transition:opacity .4s ease;z-index:2;
+  display:flex;align-items:center;justify-content:center
+}
+.pcard-overlay-btn{
+  background:var(--y);color:var(--dk);
+  border:none;border-radius:100px;
+  padding:12px 24px;font-size:.85rem;font-weight:700;
+  font-family:var(--fb);cursor:pointer;
+  transform:translateY(10px);
+  transition:transform .3s ease .1s;
+  white-space:nowrap
+}
+.pcard:hover .pcard-overlay-btn{transform:translateY(0)}
+
+/* Info at bottom */
+.pcard-info{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:20px;z-index:3;
+  transform:translateY(8px);opacity:0;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s ease
+}
+.pcard-title{font-family:var(--fd);font-size:1rem;font-weight:700;color:#fff;margin-bottom:6px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.pcard-meta{display:flex;gap:6px;flex-wrap:wrap}
+.pcard-tag{
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.85);
+  border-radius:100px;padding:3px 10px;font-size:.7rem;font-weight:500;
+  opacity:0;transform:translateY(4px);
+  transition:opacity .3s ease,transform .3s ease
+}
+.pcard-tag:nth-child(1){transition-delay:.05s}
+.pcard-tag:nth-child(2){transition-delay:.1s}
+.pcard-tag:nth-child(3){transition-delay:.15s}
+/* Always-visible title for non-hovered */
+.pcard-title-always{
+  position:absolute;bottom:16px;left:16px;right:16px;
+  font-family:var(--fd);font-size:.88rem;font-weight:700;
+  color:rgba(255,255,255,.85);z-index:3;
+  text-shadow:0 1px 8px rgba(0,0,0,.6);
+  transition:opacity .3s ease
+}
+.pcard:hover .pcard-title-always{opacity:0}
+
+/* Category badge */
+.pcard-cat{
+  position:absolute;top:14px;right:14px;
+  z-index:4;padding:4px 11px;border-radius:100px;
+  font-size:.68rem;font-weight:600;font-family:var(--fd);
+  backdrop-filter:blur(10px);letter-spacing:.04em
+}
+
+/* Lightbox */
+.lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,.92);
+  z-index:9999;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+  backdrop-filter:blur(12px)
+}
+.lightbox.open{opacity:1;pointer-events:all}
+.lb-content{
+  max-width:900px;width:90%;max-height:90vh;
+  border-radius:24px;overflow:hidden;
+  transform:scale(.9);transition:transform .4s cubic-bezier(.22,1,.36,1);
+  position:relative
+}
+.lightbox.open .lb-content{transform:scale(1)}
+.lb-img{width:100%;height:500px;object-fit:cover}
+.lb-art{width:100%;height:500px}
+.lb-info{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:28px;background:linear-gradient(to top,rgba(0,0,0,.9),transparent);
+}
+.lb-title{font-family:var(--fd);font-size:1.4rem;font-weight:800;margin-bottom:8px}
+.lb-desc{font-size:.875rem;color:rgba(255,255,255,.6);line-height:1.6;max-width:500px}
+.lb-close{
+  position:absolute;top:16px;right:16px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s
+}
+.lb-close:hover{background:rgba(255,255,255,.2)}
+.lb-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;z-index:1
+}
+.lb-nav:hover{background:rgba(255,255,255,.2);transform:translateY(-50%) scale(1.08)}
+.lb-prev{left:16px}.lb-next{right:16px}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal:nth-child(2){transition-delay:.08s}
+.reveal:nth-child(3){transition-delay:.16s}
+.reveal:nth-child(4){transition-delay:.24s}
+.reveal:nth-child(5){transition-delay:.32s}
+
+/* ── Other pages (services, events, dashboard, etc) ── */
+.card{background:var(--dk3);border:1px solid var(--dk5);border-radius:20px;padding:26px;transition:var(--tr)}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(0,0,0,.45)}
+.sec{padding:84px 0}
+.sec-dark{background:var(--dk2)}
+.sh{margin-bottom:48px}
+.sh .lbl{display:block;margin-bottom:12px}
+.sh h2{margin-bottom:12px}
+.d2{font-family:var(--fd);font-size:clamp(1.7rem,3.8vw,3rem);font-weight:700;line-height:1.05;letter-spacing:-.02em}
+.h1{font-family:var(--fd);font-size:clamp(1.25rem,2.5vw,1.9rem);font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.body-t{font-size:.98rem;line-height:1.75;color:var(--mu);font-weight:300}
+.ac{color:var(--y)}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.divider{height:1px;background:var(--dk5)}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fl{font-size:.82rem;font-weight:500;color:var(--wh2)}
+.fi,.ft,.fs{background:var(--dk3);border:1.5px solid var(--dk5);border-radius:16px;padding:12px 15px;color:var(--wh);font-size:.88rem;transition:var(--tr);width:100%}
+.fi:focus,.ft:focus,.fs:focus{outline:none;border-color:var(--y);box-shadow:0 0 0 3px rgba(232,255,71,.08)}
+.fi::placeholder,.ft::placeholder{color:var(--mu2)}
+.ft{resize:vertical;min-height:100px}
+.fs option{background:var(--dk3)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(10,10,10,.3);border-top-color:var(--dk);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;background:var(--dk4);border:1px solid var(--dk5);border-radius:100px;font-size:.73rem;font-weight:500;color:var(--mu)}
+.tag-y{background:rgba(232,255,71,.08);border-color:rgba(232,255,71,.2);color:var(--y)}
+.tag-p{background:rgba(124,111,255,.1);border-color:rgba(124,111,255,.25);color:#9d94ff}
+.tag-g{background:rgba(85,216,106,.1);border-color:rgba(85,216,106,.2);color:var(--g)}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--dk3);border:1px solid var(--dk5);border-radius:100px;padding:10px 22px;font-size:.82rem;display:flex;align-items:center;gap:9px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--dk)}::-webkit-scrollbar-thumb{background:var(--dk5);border-radius:3px}
+
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--dk5);border-radius:28px;overflow:hidden}
+.step{background:var(--dk2);padding:32px 22px;display:flex;flex-direction:column;gap:9px}
+.step-n{font-family:var(--fd);font-size:2.5rem;font-weight:800;color:rgba(232,255,71,.09);line-height:1;letter-spacing:-.04em}
+.step h3{font-size:.95rem;font-weight:700;font-family:var(--fd)}
+.step p{font-size:.78rem;color:var(--mu);line-height:1.6}
+
+/* Testimonials */
+.tc{display:flex;flex-direction:column;gap:12px}
+.stars{color:var(--y);letter-spacing:1px;font-size:.8rem}
+.ttext{font-size:.88rem;color:var(--wh2);line-height:1.75;font-style:italic;flex:1}
+.tauth{display:flex;align-items:center;gap:9px;padding-top:12px;border-top:1px solid var(--dk5)}
+.tav{width:36px;height:36px;background:var(--dk5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--y);font-family:var(--fd);flex-shrink:0}
+
+/* Footer */
+footer{background:var(--dk2);border-top:1px solid var(--dk5);padding:64px 0 26px}
+.ftg{display:grid;grid-template-columns:1fr 1.4fr;gap:58px;margin-bottom:48px}
+.ftl{display:flex;align-items:center;gap:6px;font-family:var(--fd);font-size:1.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:12px;cursor:pointer}
+.ftl .lm{width:28px;height:28px;background:var(--y);color:var(--dk);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800}
+.ftcols{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.ftcol h4{font-family:var(--fd);font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:12px}
+.ftcol a{display:block;color:var(--wh2);font-size:.83rem;margin-bottom:8px;transition:var(--tr);cursor:pointer}
+.ftcol a:hover{color:var(--y);padding-left:3px}
+.ftbot{padding-top:22px;border-top:1px solid var(--dk5);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px}
+.ftbot p{font-size:.7rem;color:var(--mu2)}
+
+/* Responsive */
+@media(max-width:1024px){.port-grid{grid-template-columns:repeat(2,1fr)}.port-grid .wide{grid-column:span 2}.steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.port-grid{grid-template-columns:1fr}.port-grid .wide{grid-column:span 1}.port-grid .tall{grid-row:span 1}.sec{padding:56px 0}.g2,.g3{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.ftg{grid-template-columns:1fr}.fr{grid-template-columns:1fr}.hero-title{font-size:clamp(2.4rem,10vw,4rem)}.lb-img,.lb-art{height:320px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav" id="navbar">
+  <div class="c ni">
+    <div class="logo" onclick="go('home')">
+      <div class="lm">M</div><span>elo<span style="color:var(--y)">.</span></span>
+    </div>
+    <nav class="nls">
+      <span class="nl on" onclick="go('home')" id="nl-home">Home</span>
+      <span class="nl" onclick="go('portfolio')" id="nl-portfolio">Portfolio</span>
+      <span class="nl" onclick="go('services')" id="nl-services">Services</span>
+      <span class="nl" onclick="go('events')" id="nl-events">Events<span class="nb">LIVE</span></span>
+      <span class="nl" onclick="go('contact')" id="nl-contact">Contact</span>
+    </nav>
+    <button class="btn by sm" onclick="go('contact')">Start Project →</button>
+  </div>
+</header>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════
+     HOME PAGE — CINEMATIC HERO
+══════════════════════════════════════ -->
+<div id="page-home" class="page on">
+
+  <!-- HERO -->
+  <section class="hero">
+    <!-- Animated canvas wallpaper -->
+    <canvas id="hero-canvas"></canvas>
+
+    <!-- Scene images (using unsplash for real backgrounds) -->
+    <div class="hero-scenes" id="hero-scenes">
+      <div class="hero-scene active" id="scene-0" style="background:linear-gradient(135deg,#0a0a1a 0%,#1a0a2e 40%,#0a1a0a 100%)"></div>
+      <div class="hero-scene" id="scene-1" style="background:linear-gradient(135deg,#1a0808 0%,#2a1010 40%,#0a0a1a 100%)"></div>
+      <div class="hero-scene" id="scene-2" style="background:linear-gradient(135deg,#08081a 0%,#101828 40%,#1a0a0a 100%)"></div>
+      <div class="hero-scene" id="scene-3" style="background:linear-gradient(135deg,#0a1a08 0%,#0a0a1a 40%,#180808 100%)"></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+    <div class="hero-overlay-bottom"></div>
+
+    <!-- Scrolling ticker -->
+    <div class="hero-ticker">
+      <div class="ticker-inner" id="ticker-inner"></div>
+    </div>
+
+    <!-- Main content -->
+    <div class="c hero-content">
+      <div class="hero-badge">
+        <div class="hb-dot"></div>
+        <span class="hb-txt">Creative Studio & Event Platform</span>
+        <div class="hb-sep"></div>
+        <span class="hb-sub">Dar es Salaam, Tanzania</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="line"><span class="inner">Design that</span></span>
+        <span class="line"><span class="inner" style="color:var(--y)">moves brands</span></span>
+        <span class="line"><span class="inner">forward.</span></span>
+      </h1>
+
+      <p class="hero-sub">Graphic design, branding, embroidery, print — and a complete smart eCard & event platform. 500K+ invitations sent. 98% delivery rate.</p>
+
+      <div class="hero-btns">
+        <button class="btn by lg" onclick="go('portfolio')">View Our Work →</button>
+        <button class="btn bp lg" onclick="go('events')">✉ Create Event</button>
+        <button class="btn bo lg" onclick="go('contact')">Start a Project</button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hs"><span class="hs-n">500K+</span><span class="hs-l">Invitations</span></div>
+        <div class="hs-div"></div>
+        <div class="hs"><span class="hs-n">200+</span><span class="hs-l">Projects</span></div>
+        <div class="hs-div"></div>
+        <div class="hs"><span class="hs-n">98%</span><span class="hs-l">Delivery</span></div>
+        <div class="hs-div"></div>
+        <div class="hs"><span class="hs-n">24/7</span><span class="hs-l">Support</span></div>
+      </div>
+    </div>
+
+    <!-- Scene dots -->
+    <div class="hero-dots" id="hero-dots"></div>
+  </section>
+
+  <!-- SERVICES PREVIEW -->
+  <section class="sec">
+    <div class="c">
+      <div class="sh reveal"><span class="lbl">What We Do</span><h2 class="d2">Every creative service<br>under one roof</h2></div>
+      <div class="g2">
+        <div class="card reveal" style="cursor:pointer" onclick="go('portfolio')">
+          <span style="font-size:1.7rem;color:var(--y);display:block;margin-bottom:10px">✦</span>
+          <h3 style="font-family:var(--fd);font-size:1.1rem;font-weight:700;margin-bottom:6px">Graphic Design & Branding</h3>
+          <p style="font-size:.85rem;color:var(--mu)">Logos, identity systems, social media, print and marketing collateral.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--dk5);margin-top:14px">
+            <span style="font-family:var(--fd);font-size:.82rem;font-weight:600;color:var(--y)">From $50</span>
+            <span style="font-size:.78rem;color:var(--mu)">View Portfolio →</span>
+          </div>
+        </div>
+        <div class="card reveal" style="cursor:pointer;border-color:rgba(124,111,255,.25);background:rgba(124,111,255,.04)" onclick="go('events')">
+          <span style="font-size:1.7rem;color:#9d94ff;display:block;margin-bottom:10px">✉</span>
+          <h3 style="font-family:var(--fd);font-size:1.1rem;font-weight:700;margin-bottom:6px;color:#9d94ff">Smart eCards & Events</h3>
+          <p style="font-size:.85rem;color:var(--mu)">Digital invitations, RSVP tracking, michango, QR check-in and live dashboards.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid rgba(124,111,255,.15);margin-top:14px">
+            <span style="font-family:var(--fd);font-size:.82rem;font-weight:600;color:#9d94ff">From $30/event</span>
+            <span style="font-size:.78rem;color:var(--mu)">Create Event →</span>
+          </div>
+        </div>
+        <div class="card reveal" style="cursor:pointer" onclick="go('portfolio')">
+          <span style="font-size:1.7rem;color:#4ECDC4;display:block;margin-bottom:10px">⬡</span>
+          <h3 style="font-family:var(--fd);font-size:1.1rem;font-weight:700;margin-bottom:6px">Embroidery</h3>
+          <p style="font-size:.85rem;color:var(--mu)">Premium embroidery for uniforms, caps, bags and corporate apparel.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--dk5);margin-top:14px">
+            <span style="font-family:var(--fd);font-size:.82rem;font-weight:600;color:var(--y)">From $15/pc</span>
+            <span style="font-size:.78rem;color:var(--mu)">View Work →</span>
+          </div>
+        </div>
+        <div class="card reveal" style="cursor:pointer" onclick="go('portfolio')">
+          <span style="font-size:1.7rem;color:var(--o);display:block;margin-bottom:10px">▣</span>
+          <h3 style="font-family:var(--fd);font-size:1.1rem;font-weight:700;margin-bottom:6px">Printing</h3>
+          <p style="font-size:.85rem;color:var(--mu)">Business cards, banners, t-shirts, mugs and promotional items.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--dk5);margin-top:14px">
+            <span style="font-family:var(--fd);font-size:.82rem;font-weight:600;color:var(--y)">From $10</span>
+            <span style="font-size:.78rem;color:var(--mu)">View Work →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO PREVIEW (3 cards) -->
+  <section class="sec sec-dark">
+    <div class="c">
+      <div class="sh reveal" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:36px">
+        <div><span class="lbl" style="display:block;margin-bottom:10px">Recent Work</span><h2 class="d2">Featured projects</h2></div>
+        <button class="btn bo" onclick="go('portfolio')">View All Work →</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" id="home-portfolio"></div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="sec">
+    <div class="c">
+      <div class="sh reveal"><span class="lbl">Process</span><h2 class="d2">How we work</h2></div>
+      <div class="steps">
+        <div class="step reveal"><span class="step-n">01</span><h3>Brief</h3><p>Share your project details, vision and requirements.</p></div>
+        <div class="step reveal"><span class="step-n">02</span><h3>Design</h3><p>We craft concepts and deliver previews within 48 hours.</p></div>
+        <div class="step reveal"><span class="step-n">03</span><h3>Refine</h3><p>2 revision rounds included — we polish until perfect.</p></div>
+        <div class="step reveal"><span class="step-n">04</span><h3>Deliver</h3><p>Final files in every format, ready to launch.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="sec sec-dark">
+    <div class="c">
+      <div class="sh reveal"><span class="lbl">Reviews</span><h2 class="d2">What clients say</h2></div>
+      <div class="g3">
+        <div class="card tc reveal"><div class="stars">★★★★★</div><p class="ttext">"The wedding eCard was stunning! The QR check-in and RSVP tracking saved us so much stress on the day."</p><div class="tauth"><div class="tav">ES</div><div><div style="font-weight:600;font-size:.82rem">Ester Mbeki</div><div style="font-size:.72rem;color:var(--mu)">Bride, 2024</div></div></div></div>
+        <div class="card tc reveal"><div class="stars">★★★★★</div><p class="ttext">"EAGMA Awards ran flawlessly. The live dashboard showed everything in real time — delivery, RSVPs, check-ins."</p><div class="tauth"><div class="tav">KA</div><div><div style="font-weight:600;font-size:.82rem">Kwame Asante</div><div style="font-size:.72rem;color:var(--mu)">EAGMA Director</div></div></div></div>
+        <div class="card tc reveal"><div class="stars">★★★★★</div><p class="ttext">"Melo Design transformed our brand. Logo, guidelines, collateral — delivered within a week. Exceptional quality."</p><div class="tauth"><div class="tav">AD</div><div><div style="font-weight:600;font-size:.82rem">Amara Diallo</div><div style="font-size:.72rem;color:var(--mu)">CEO, NovaTech Africa</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="sec" style="padding:56px 0">
+    <div class="c">
+      <div class="card reveal" style="position:relative;overflow:hidden;padding:52px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center">
+        <div style="position:absolute;width:300px;height:300px;background:var(--y);border-radius:50%;filter:blur(90px);opacity:.05;right:-60px;top:-60px;pointer-events:none"></div>
+        <div><h2 class="d2">Ready to get started?</h2><p class="body-t" style="margin-top:10px">Design, events, and digital — all from one creative studio.</p></div>
+        <div style="display:flex;flex-direction:column;gap:9px;flex-shrink:0">
+          <button class="btn by lg" onclick="go('contact')">Request a Quote →</button>
+          <button class="btn bp lg" onclick="go('events')">✉ Create Event</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════════════════════════════
+     PORTFOLIO PAGE
+══════════════════════════════════════ -->
+<div id="page-portfolio" class="page">
+  <section class="ph">
+    <div class="c">
+      <span class="lbl" style="display:block;margin-bottom:14px">Portfolio</span>
+      <h1 class="d1" style="margin-bottom:16px">Our creative<br><span class="ac">work</span></h1>
+      <p class="body-t" style="max-width:520px">Designs, brands, events and productions — each one built to stand out.</p>
+    </div>
+  </section>
+  <section class="sec" style="padding-top:0">
+    <div class="c">
+      <div class="fb" style="margin-bottom:40px">
+        <button class="fbb on" onclick="filterPort('All',this)">All</button>
+        <button class="fbb" onclick="filterPort('Branding',this)">Branding</button>
+        <button class="fbb" onclick="filterPort('Logo',this)">Logo</button>
+        <button class="fbb" onclick="filterPort('Print',this)">Print</button>
+        <button class="fbb" onclick="filterPort('Embroidery',this)">Embroidery</button>
+        <button class="fbb" onclick="filterPort('Events',this)">Events</button>
+      </div>
+      <div class="port-grid" id="port-grid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLB()">
+  <button class="lb-nav lb-prev" onclick="event.stopPropagation();prevLB()">‹</button>
+  <div class="lb-content" onclick="event.stopPropagation()">
+    <canvas class="lb-art" id="lb-canvas"></canvas>
+    <div class="lb-info">
+      <div class="lb-title" id="lb-title">—</div>
+      <div class="lb-desc" id="lb-desc">—</div>
+      <div style="display:flex;gap:8px;margin-top:12px" id="lb-tags"></div>
+    </div>
+    <button class="lb-close" onclick="closeLB()">✕</button>
+  </div>
+  <button class="lb-nav lb-next" onclick="event.stopPropagation();nextLB()">›</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     SERVICES PAGE
+══════════════════════════════════════ -->
+<div id="page-services" class="page">
+  <section class="ph"><div class="c"><span class="lbl" style="display:block;margin-bottom:14px">Services</span><h1 class="d1" style="margin-bottom:16px">Everything your<br>brand needs<span class="ac">.</span></h1><p class="body-t" style="max-width:480px">From visual identity to live event management.</p></div></section>
+  <section class="sec" style="padding-top:0">
+    <div class="c">
+      <div class="g2">
+        <div class="card"><span style="font-size:2rem;color:var(--y);display:block;margin-bottom:12px">✦</span><h3 style="font-family:var(--fd);font-size:1.2rem;font-weight:700;margin-bottom:8px">Graphic Design</h3><p style="font-size:.875rem;color:var(--mu);line-height:1.7;margin-bottom:16px">Social media graphics, flyers, infographics, digital ads and brand collateral crafted with precision.</p><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px"><span class="tag">Social Media</span><span class="tag">Flyers</span><span class="tag">Digital Ads</span><span class="tag">Infographics</span></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:var(--fd);font-size:1rem;font-weight:700;color:var(--y)">From $50</span><button class="btn by xs" onclick="go('contact')">Request →</button></div></div>
+        <div class="card"><span style="font-size:2rem;color:var(--r);display:block;margin-bottom:12px">◈</span><h3 style="font-family:var(--fd);font-size:1.2rem;font-weight:700;margin-bottom:8px">Branding</h3><p style="font-size:.875rem;color:var(--mu);line-height:1.7;margin-bottom:16px">Complete brand identities — logos, color systems, typography guidelines, and brand strategy.</p><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px"><span class="tag">Logo Design</span><span class="tag">Guidelines</span><span class="tag">Typography</span><span class="tag">Strategy</span></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:var(--fd);font-size:1rem;font-weight:700;color:var(--y)">From $200</span><button class="btn by xs" onclick="go('contact')">Request →</button></div></div>
+        <div class="card" style="border-color:rgba(124,111,255,.25);background:rgba(124,111,255,.04)"><span style="font-size:2rem;color:#9d94ff;display:block;margin-bottom:12px">✉</span><h3 style="font-family:var(--fd);font-size:1.2rem;font-weight:700;margin-bottom:8px;color:#9d94ff">Smart eCards & Events</h3><p style="font-size:.875rem;color:var(--mu);line-height:1.7;margin-bottom:16px">Full event management — create eCards, WhatsApp/SMS delivery, RSVPs, michango, QR check-in and live dashboards.</p><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px"><span class="tag tag-p">RSVP Tracking</span><span class="tag tag-p">Michango</span><span class="tag tag-p">QR Check-in</span></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:var(--fd);font-size:1rem;font-weight:700;color:#9d94ff">From $30</span><button class="btn bp xs" onclick="go('events')">Create →</button></div></div>
+        <div class="card"><span style="font-size:2rem;color:var(--o);display:block;margin-bottom:12px">▣</span><h3 style="font-family:var(--fd);font-size:1.2rem;font-weight:700;margin-bottom:8px">Print & Embroidery</h3><p style="font-size:.875rem;color:var(--mu);line-height:1.7;margin-bottom:16px">Business cards, banners, t-shirts, mugs, promotional items and premium logo embroidery on uniforms.</p><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px"><span class="tag">Business Cards</span><span class="tag">Banners</span><span class="tag">Embroidery</span><span class="tag">T-Shirts</span></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:var(--fd);font-size:1rem;font-weight:700;color:var(--y)">From $10</span><button class="btn by xs" onclick="go('contact')">Request →</button></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- EVENTS / CONTACT pages — simplified -->
+<div id="page-events" class="page">
+  <section class="ph"><div class="c"><span class="lbl" style="display:block;margin-bottom:14px;color:#9d94ff">✉ Event Platform</span><h1 class="d1" style="margin-bottom:16px">Create events that<br><span style="color:#9d94ff">run themselves</span></h1><p class="body-t" style="max-width:500px">Full event management: eCards, WhatsApp/SMS, RSVPs, michango, QR check-in, live analytics.</p><div style="margin-top:28px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn bp lg">Create Event Free →</button><button class="btn bo lg">Send Test Card</button></div></div></section>
+  <section class="sec" style="padding-top:0"><div class="c"><div class="g3"><div class="card"><span style="font-size:1.8rem;margin-bottom:8px;display:block">📲</span><h3 style="font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:6px">WhatsApp & SMS</h3><p style="font-size:.82rem;color:var(--mu)">98% delivery rate. Real-time analytics on reads and RSVPs.</p></div><div class="card"><span style="font-size:1.8rem;margin-bottom:8px;display:block">💰</span><h3 style="font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:6px">Michango</h3><p style="font-size:.82rem;color:var(--mu)">Collect contributions online. Auto-reminders and thank-you messages.</p></div><div class="card"><span style="font-size:1.8rem;margin-bottom:8px;display:block">🔲</span><h3 style="font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:6px">QR Check-in</h3><p style="font-size:.82rem;color:var(--mu)">Quick entrance scanning. Prevents fake invites and reduces queues.</p></div><div class="card"><span style="font-size:1.8rem;margin-bottom:8px;display:block">👥</span><h3 style="font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:6px">Guest Lists</h3><p style="font-size:.82rem;color:var(--mu)">Upload contacts, assign categories — VIP, family, staff.</p></div><div class="card"><span style="font-size:1.8rem;margin-bottom:8px;display:block">📊</span><h3 style="font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:6px">Live Dashboard</h3><p style="font-size:.82rem;color:var(--mu)">Real-time stats on delivery, reads, RSVPs, gifts and budget.</p></div><div class="card"><span style="font-size:1.8rem;margin-bottom:8px;display:block">🎨</span><h3 style="font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:6px">Custom Design</h3><p style="font-size:.82rem;color:var(--mu)">Personalized eCard with name, table/seat, map, dress code & QR.</p></div></div></div></section>
+</div>
+
+<div id="page-contact" class="page">
+  <section class="ph"><div class="c"><span class="lbl" style="display:block;margin-bottom:14px">Get Started</span><h1 class="d1" style="margin-bottom:16px">Request a<br>design<span class="ac">.</span></h1><p class="body-t" style="max-width:460px">Tell us about your project. We respond within 24 hours.</p></div></section>
+  <section class="sec" style="padding-top:0">
+    <div class="c">
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:36px">
+        <form id="cform" onsubmit="subContact(event)" style="display:flex;flex-direction:column;gap:16px">
+          <div class="fr"><div class="fg"><label class="fl">Name *</label><input class="fi" name="name" placeholder="Your name" required></div><div class="fg"><label class="fl">Email *</label><input class="fi" name="email" type="email" placeholder="you@company.com" required></div></div>
+          <div class="fg"><label class="fl">Service</label><select class="fs" name="service"><option value="">Select...</option><option>Graphic Design</option><option>Branding</option><option>Embroidery</option><option>Printing</option><option>Smart eCard / Event</option></select></div>
+          <div class="fg"><label class="fl">Message *</label><textarea class="ft" name="msg" rows="5" placeholder="Describe your project..." required></textarea></div>
+          <button type="submit" class="btn by" style="width:100%;justify-content:center;padding:15px" id="csub">Send Message →</button>
+        </form>
+        <div>
+          <div class="card" style="margin-bottom:14px"><h3 style="font-family:var(--fd);font-size:.9rem;font-weight:700;margin-bottom:14px">Contact</h3><a href="tel:+255762807070" class="btn bg sm" style="width:100%;justify-content:center;margin-bottom:8px;display:flex">📞 +255 762 807 070</a><a href="https://wa.me/255762807070" target="_blank" class="btn bp sm" style="width:100%;justify-content:center;display:flex">WhatsApp →</a></div>
+          <div class="card"><h3 style="font-family:var(--fd);font-size:.9rem;font-weight:700;margin-bottom:12px">Next Steps</h3><div style="display:flex;flex-direction:column;gap:9px;font-size:.8rem;color:var(--mu)"><div>1. Submit your brief</div><div>2. Quote within 24 hrs</div><div>3. Work begins on approval</div><div>4. Files delivered on time</div></div></div>
+        </div>
+      </div>
+      <div id="csuccess" style="display:none;max-width:400px;margin:40px auto;text-align:center">
+        <div style="width:64px;height:64px;background:var(--y);color:var(--dk);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 16px">✓</div>
+        <h2 class="h1" style="margin-bottom:8px">Message Sent!</h2>
+        <p style="font-size:.875rem;color:var(--mu)">We'll get back to you within 24 hours.</p>
+        <button class="btn by" style="margin-top:20px" onclick="go('home')">Back to Home</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="c">
+    <div class="ftg">
+      <div>
+        <div class="ftl" onclick="go('home')"><div class="lm">M</div><span>elo<span style="color:var(--y)">.</span></span></div>
+        <p style="color:var(--mu);font-size:.83rem;line-height:1.65;max-width:250px;margin-bottom:18px">Creative studio & smart event platform based in Dar es Salaam.</p>
+        <div style="display:flex;gap:7px">
+          <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--dk3);border:1px solid var(--dk5);border-radius:7px;color:var(--mu);font-size:.78rem;cursor:pointer">ig</span>
+          <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--dk3);border:1px solid var(--dk5);border-radius:7px;color:var(--mu);font-size:.78rem;cursor:pointer">tw</span>
+          <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--dk3);border:1px solid var(--dk5);border-radius:7px;color:var(--mu);font-size:.78rem;cursor:pointer">in</span>
+        </div>
+      </div>
+      <div class="ftcols">
+        <div class="ftcol"><h4>Services</h4><a onclick="go('services')">Graphic Design</a><a onclick="go('services')">Branding</a><a onclick="go('events')">Smart eCards</a><a onclick="go('services')">Embroidery</a></div>
+        <div class="ftcol"><h4>Work</h4><a onclick="go('portfolio')">Portfolio</a><a onclick="go('contact')">Get a Quote</a><a onclick="go('events')">Create Event</a></div>
+        <div class="ftcol"><h4>Contact</h4><a href="tel:+255762807070">+255 762 807 070</a><a>hello@melodesign.co</a><a>Dar es Salaam, TZ</a></div>
+      </div>
+    </div>
+    <div class="ftbot"><p>© 2025 Melo Design. All rights reserved.</p><p>Smart eCard platform — inspired by Kadijanja technology.</p></div>
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════
+// ROUTING
+// ══════════════════════════════════════
+function go(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'))
+  document.querySelectorAll('.nl').forEach(l=>l.classList.remove('on'))
+  const pg=document.getElementById('page-'+name)
+  if(pg){pg.classList.add('on');window.scrollTo({top:0,behavior:'smooth'})}
+  const nl=document.getElementById('nl-'+name)
+  if(nl)nl.classList.add('on')
+  if(name==='portfolio'){buildPortfolioGrid();initReveal()}
+  if(name==='home'){initReveal();buildHomePortfolio()}
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('up',window.scrollY>24)
+  checkReveal()
+})
+
+function showToast(msg,dur=3000){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show')
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur)
+}
+
+// ══════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════
+function initReveal(){
+  document.querySelectorAll('.reveal').forEach(el=>{
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+    },{threshold:.1})
+    obs.observe(el)
+  })
+}
+function checkReveal(){
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>{
+    const r=el.getBoundingClientRect()
+    if(r.top<window.innerHeight*.92)el.classList.add('visible')
+  })
+}
+
+// ══════════════════════════════════════
+// CINEMATIC HERO CANVAS
+// ══════════════════════════════════════
+const SCENES=[
+  {name:'Design Studio',bg1:'#0a0a1a',bg2:'#1a0a2e',accent:'#E8FF47',style:'particles'},
+  {name:'Brand Identity',bg1:'#1a0808',bg2:'#0a0a1a',accent:'#FF6B6B',style:'waves'},
+  {name:'Event Platform',bg1:'#08081a',bg2:'#101828',accent:'#7C6FFF',style:'grid'},
+  {name:'Tanzania & Beyond',bg1:'#0a1a08',bg2:'#0a0a1a',accent:'#4ECDC4',style:'constellation'},
+]
+let sceneIdx=0,sceneTimer,heroAnim
+
+function initHeroCanvas(){
+  const canvas=document.getElementById('hero-canvas')
+  const ctx=canvas.getContext('2d')
+  let W,H,particles=[],frame=0
+
+  function resize(){
+    W=canvas.width=canvas.offsetWidth
+    H=canvas.height=canvas.offsetHeight
+    initParticles()
+  }
+
+  function initParticles(){
+    particles=[]
+    const n=Math.min(120,Math.floor(W*H/14000))
+    for(let i=0;i<n;i++){
+      particles.push({
+        x:Math.random()*W,y:Math.random()*H,
+        vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,
+        r:Math.random()*2+.5,
+        life:Math.random(),lifeSpeed:.002+Math.random()*.003,
+        type:Math.random()>.6?'dot':'line'
+      })
+    }
+  }
+
+  const sc=SCENES[0]
+  let curBg1=sc.bg1,curBg2=sc.bg2,curAccent=sc.accent
+
+  function hexToRgb(h){
+    const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16)
+    return [r,g,b]
+  }
+  function lerpColor(a,b,t){
+    const [r1,g1,b1]=hexToRgb(a),[r2,g2,b2]=hexToRgb(b)
+    return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`
+  }
+
+  let transProgress=1,transFrom={bg1:'#0a0a1a',bg2:'#1a0a2e',accent:'#E8FF47'},transTo={...transFrom}
+
+  function startSceneTransition(idx){
+    transFrom={bg1:curBg1,bg2:curBg2,accent:curAccent}
+    transTo={bg1:SCENES[idx].bg1,bg2:SCENES[idx].bg2,accent:SCENES[idx].accent}
+    transProgress=0
+  }
+
+  function draw(){
+    heroAnim=requestAnimationFrame(draw)
+    frame++
+
+    if(transProgress<1){transProgress=Math.min(1,transProgress+.008)}
+    curBg1=lerpColor(transFrom.bg1,transTo.bg1,transProgress)
+    curBg2=lerpColor(transFrom.bg2,transTo.bg2,transProgress)
+    curAccent=lerpColor(transFrom.accent,transTo.accent,transProgress)
+
+    // Background gradient
+    const grd=ctx.createLinearGradient(0,0,W,H)
+    grd.addColorStop(0,curBg1)
+    grd.addColorStop(.6,curBg2)
+    grd.addColorStop(1,curBg1)
+    ctx.fillStyle=grd
+    ctx.fillRect(0,0,W,H)
+
+    // Scene-specific effects
+    const style=SCENES[sceneIdx].style
+    const [ar,ag,ab]=hexToRgb(curAccent)
+
+    if(style==='particles'||style==='constellation'){
+      // Draw connections between nearby particles
+      for(let i=0;i<particles.length;i++){
+        for(let j=i+1;j<particles.length;j++){
+          const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y
+          const dist=Math.sqrt(dx*dx+dy*dy)
+          if(dist<140){
+            const alpha=(.7-(dist/140))*.35*(particles[i].life+particles[j].life)/2
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x,particles[i].y)
+            ctx.lineTo(particles[j].x,particles[j].y)
+            ctx.strokeStyle=`rgba(${ar},${ag},${ab},${alpha})`
+            ctx.lineWidth=.5
+            ctx.stroke()
+          }
+        }
+      }
+    }
+
+    if(style==='waves'){
+      // Sine waves
+      for(let w=0;w<4;w++){
+        ctx.beginPath()
+        const amp=30+w*15,freq=.003+w*.001,speed=frame*.006+w*.5,ybase=H*.3+w*(H*.15)
+        for(let x=0;x<=W;x+=3){
+          const y=ybase+Math.sin(x*freq+speed)*amp+Math.cos(x*freq*.7+speed*.8)*amp*.4
+          x===0?ctx.moveTo(x,y):ctx.lineTo(x,y)
+        }
+        ctx.strokeStyle=`rgba(${ar},${ag},${ab},${.08-w*.015})`
+        ctx.lineWidth=1.5-w*.2
+        ctx.stroke()
+      }
+    }
+
+    if(style==='grid'){
+      // Moving grid lines
+      const gs=80,offset=frame*.4%gs
+      ctx.strokeStyle=`rgba(${ar},${ag},${ab},.04)`
+      ctx.lineWidth=.5
+      for(let x=-gs+offset;x<W+gs;x+=gs){
+        ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()
+      }
+      for(let y=-gs+(frame*.3%gs);y<H+gs;y+=gs){
+        ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()
+      }
+      // Glowing intersection points
+      for(let x=offset;x<W;x+=gs){
+        for(let y=(frame*.3%gs);y<H;y+=gs){
+          const pulse=Math.sin(frame*.04+x*.01+y*.01)*.5+.5
+          ctx.beginPath()
+          ctx.arc(x,y,1.5*pulse+.5,0,Math.PI*2)
+          ctx.fillStyle=`rgba(${ar},${ag},${ab},${.3*pulse})`
+          ctx.fill()
+        }
+      }
+    }
+
+    // Draw particles
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy
+      p.life+=p.lifeSpeed
+      if(p.life>1){p.life=0;p.x=Math.random()*W;p.y=Math.random()*H}
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0
+      const alpha=Math.sin(p.life*Math.PI)*.7
+      ctx.beginPath()
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+      ctx.fillStyle=`rgba(${ar},${ag},${ab},${alpha})`
+      ctx.fill()
+    })
+
+    // Floating geometric shapes
+    for(let s=0;s<6;s++){
+      const t=frame*.003+s*1.1
+      const x=W*.15+Math.sin(t+s)*W*.3,y=H*.5+Math.cos(t*.7+s)*H*.25
+      const size=20+s*8,rot=t*.3
+      ctx.save();ctx.translate(x,y);ctx.rotate(rot)
+      ctx.strokeStyle=`rgba(${ar},${ag},${ab},${.04+Math.sin(t)*0.02})`
+      ctx.lineWidth=.7
+      ctx.strokeRect(-size/2,-size/2,size,size)
+      ctx.restore()
+    }
+
+    // Subtle light streaks
+    if(frame%3===0&&Math.random()>.98){
+      const streak={x:Math.random()*W,y:Math.random()*H,len:Math.random()*200+100,angle:Math.random()*Math.PI*2,alpha:.08,life:0}
+      ctx.save()
+      ctx.translate(streak.x,streak.y);ctx.rotate(streak.angle)
+      const sg=ctx.createLinearGradient(0,0,streak.len,0)
+      sg.addColorStop(0,`rgba(${ar},${ag},${ab},0)`)
+      sg.addColorStop(.5,`rgba(${ar},${ag},${ab},${streak.alpha})`)
+      sg.addColorStop(1,`rgba(${ar},${ag},${ab},0)`)
+      ctx.strokeStyle=sg;ctx.lineWidth=1;ctx.beginPath()
+      ctx.moveTo(0,0);ctx.lineTo(streak.len,0);ctx.stroke()
+      ctx.restore()
+    }
+  }
+
+  window.addEventListener('resize',resize)
+  resize();draw()
+  window.heroStartTransition=startSceneTransition
+}
+
+function initHeroScenes(){
+  const dots=document.getElementById('hero-dots')
+  SCENES.forEach((_,i)=>{
+    const d=document.createElement('div');d.className='hdot'+(i===0?' on':'')
+    d.onclick=()=>setScene(i);dots.appendChild(d)
+  })
+
+  // Ticker
+  const items=['Graphic Design','Branding','Embroidery','Smart eCards','Event Management','Print','Dar es Salaam','Tanzania & Beyond']
+  const ticker=document.getElementById('ticker-inner')
+  const full=[...items,...items].map(t=>`<span class="ticker-item">${t}</span><span class="ticker-sep">✦</span>`).join('')
+  ticker.innerHTML=full+full // duplicate for seamless loop
+
+  // Auto-advance scenes
+  sceneTimer=setInterval(()=>setScene((sceneIdx+1)%SCENES.length),5000)
+}
+
+function setScene(idx){
+  clearInterval(sceneTimer)
+  document.querySelectorAll('.hero-scene').forEach((s,i)=>s.classList.toggle('active',i===idx))
+  document.querySelectorAll('.hdot').forEach((d,i)=>d.classList.toggle('on',i===idx))
+  sceneIdx=idx
+  if(window.heroStartTransition)heroStartTransition(idx)
+  sceneTimer=setInterval(()=>setScene((sceneIdx+1)%SCENES.length),5000)
+}
+
+// ══════════════════════════════════════
+// PORTFOLIO DATA
+// ══════════════════════════════════════
+const PORTFOLIO=[
+  {id:1,title:'Afrocentric Brand Identity',cat:'Branding',tags:['Logo','Brand','Identity'],desc:'Complete brand identity system for an African-inspired fashion house. Logo, color palette, typography and brand guidelines.',palette:['#E8FF47','#1a1a2e','#2a1a3a'],shape:'brand',wide:true},
+  {id:2,title:'Tech Startup Logo',cat:'Logo',tags:['Logo','Minimal','Tech'],desc:'Clean geometric logo for a Nairobi-based SaaS startup. Designed for digital-first applications.',palette:['#7C6FFF','#1a2a1a','#101820'],shape:'logo',wide:false},
+  {id:3,title:'EAGMA Awards Night',cat:'Events',tags:['eCard','Corporate','Premium'],desc:'Digital invitation for the EAGMA Awards Night at The Super Dome, Oysterbay. 430 guests, QR check-in.',palette:['#9d94ff','#1a0a2e','#0a0a1a'],shape:'event',wide:false,tall:true},
+  {id:4,title:'Emil & Ester Wedding',cat:'Events',tags:['eCard','Wedding','2024'],desc:'Romantic wedding invitation with personalized QR codes, RSVP tracking and online michango collection.',palette:['#FF6B6B','#2a1a1e','#1a080e'],shape:'wedding',wide:false},
+  {id:5,title:'Fashion Collection Lookbook',cat:'Print',tags:['Print','Fashion','Editorial'],desc:'12-page lookbook for a Dar es Salaam fashion label. Editorial layout, rich photography direction.',palette:['#FF9F43','#2a1a0a','#1a0e08'],shape:'print',wide:true},
+  {id:6,title:'Ester Sendoff Party',cat:'Events',tags:['eCard','Sendoff','2024'],desc:'Vibrant sendoff party invitation with WhatsApp delivery, 120 guests and live RSVP dashboard.',palette:['#4ECDC4','#1a2a1e','#08180e'],shape:'sendoff',wide:false},
+  {id:7,title:'Corporate Embroidery Set',cat:'Embroidery',tags:['Embroidery','Corporate','Uniform'],desc:'Logo embroidery on uniforms, caps and bags for a Tanzanian financial institution.',palette:['#FF9F43','#1a1a0e','#12120a'],shape:'emb',wide:false},
+  {id:8,title:'NGO Brand Guidelines',cat:'Branding',tags:['Brand','NGO','Identity'],desc:'Comprehensive brand guidelines for a regional NGO. Logo variants, color system, print and digital templates.',palette:['#7C6FFF','#1a1a2a','#10101a'],shape:'brand2',wide:false},
+  {id:9,title:'Fanuel Wedding 2023',cat:'Events',tags:['eCard','Wedding','Kilimanjaro'],desc:'Elegant mountain-themed wedding invitation for a ceremony in Kilimanjaro. Traditional and digital elements.',palette:['#E8FF47','#1a1a0e','#0e0e08'],shape:'wedding2',wide:false},
+]
+
+// Generate beautiful canvas art for each portfolio item
+function drawPortfolioArt(canvas,item,w,h){
+  canvas.width=w*2;canvas.height=h*2
+  canvas.style.width=w+'px';canvas.style.height=h+'px'
+  const ctx=canvas.getContext('2d')
+  const [c1,c2,c3]=item.palette
+  ctx.scale(2,2)
+
+  // Background
+  const grd=ctx.createLinearGradient(0,0,w,h)
+  grd.addColorStop(0,c2);grd.addColorStop(1,c3)
+  ctx.fillStyle=grd;ctx.fillRect(0,0,w,h)
+
+  function hexA(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`}
+
+  const s=item.shape
+  ctx.save()
+
+  if(s==='brand'||s==='brand2'){
+    // Bold geometric brand mark
+    ctx.strokeStyle=hexA(c1,.6);ctx.lineWidth=2
+    const cx=w/2,cy=h/2,rs=[60,40,22]
+    rs.forEach((r,i)=>{
+      ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2)
+      ctx.strokeStyle=hexA(c1,[.5,.35,.6][i]);ctx.stroke()
+    })
+    ctx.fillStyle=hexA(c1,.9)
+    ctx.font=`bold ${Math.min(w,h)*.25}px 'Syne',sans-serif`
+    ctx.textAlign='center';ctx.textBaseline='middle'
+    ctx.fillText(s==='brand'?'AF':'NG',cx,cy)
+    // Orbit dots
+    for(let i=0;i<8;i++){
+      const a=(i/8)*Math.PI*2,r=60
+      ctx.beginPath();ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,3,0,Math.PI*2)
+      ctx.fillStyle=hexA(c1,.7);ctx.fill()
+    }
+  }
+
+  if(s==='logo'){
+    // Minimal geometric logo
+    const cx=w/2,cy=h/2,size=Math.min(w,h)*.35
+    ctx.strokeStyle=hexA(c1,.8);ctx.lineWidth=2.5
+    ctx.beginPath()
+    ctx.moveTo(cx-size,cy);ctx.lineTo(cx,cy-size)
+    ctx.lineTo(cx+size,cy);ctx.lineTo(cx,cy+size);ctx.closePath()
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(cx-size*.6,cy);ctx.lineTo(cx,cy-size*.6)
+    ctx.lineTo(cx+size*.6,cy);ctx.lineTo(cx,cy+size*.6);ctx.closePath()
+    ctx.fillStyle=hexA(c1,.15);ctx.fill()
+    ctx.font=`700 ${size*.5}px 'Syne',sans-serif`
+    ctx.fillStyle=hexA(c1,.9);ctx.textAlign='center';ctx.textBaseline='middle'
+    ctx.fillText('TS',cx,cy)
+  }
+
+  if(s==='event'||s==='corporate'){
+    // Award / event design
+    const cx=w/2,cy=h*.45
+    // Star/award shape
+    ctx.fillStyle=hexA(c1,.9)
+    for(let i=0;i<5;i++){
+      ctx.save();ctx.translate(cx,cy);ctx.rotate((i/5)*Math.PI*2-Math.PI/2)
+      ctx.beginPath();ctx.moveTo(0,-50);ctx.lineTo(12,-20);ctx.lineTo(45,-15)
+      ctx.lineTo(18,8);ctx.lineTo(28,42);ctx.lineTo(0,25);ctx.lineTo(-28,42)
+      ctx.lineTo(-18,8);ctx.lineTo(-45,-15);ctx.lineTo(-12,-20);ctx.closePath()
+      ctx.fillStyle=hexA(c1,.12);ctx.fill()
+      ctx.restore()
+    }
+    ctx.font=`800 ${Math.min(w,h)*.18}px 'Syne',sans-serif`
+    ctx.fillStyle=hexA(c1,.9);ctx.textAlign='center';ctx.textBaseline='middle'
+    ctx.fillText('EAGMA',cx,cy)
+    ctx.font=`400 ${Math.min(w,h)*.07}px 'Syne',sans-serif`
+    ctx.fillStyle=hexA(c1,.5);ctx.fillText('AWARDS NIGHT 2025',cx,cy+Math.min(w,h)*.14)
+  }
+
+  if(s==='wedding'||s==='wedding2'){
+    const cx=w/2,cy=h/2
+    // Heart motif
+    ctx.fillStyle=hexA(c1,.12)
+    ctx.beginPath()
+    const hx=cx-60,hy=cy-60
+    for(let t=0;t<=2*Math.PI;t+=.05){
+      const x=hx+16*(Math.pow(Math.sin(t),3))*5
+      const y=hy-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*5
+      t===0?ctx.moveTo(x,y):ctx.lineTo(x,y)
+    }
+    ctx.fill()
+    ctx.font=`800 ${Math.min(w,h)*.12}px 'Syne',sans-serif`
+    ctx.fillStyle=hexA(c1,.85);ctx.textAlign='center';ctx.textBaseline='middle'
+    ctx.fillText(s==='wedding'?'Emil & Ester':'Fanuel & Grace',cx,cy)
+    ctx.font=`300 ${Math.min(w,h)*.065}px 'DM Sans',sans-serif`
+    ctx.fillStyle=hexA(c1,.45);ctx.fillText(s==='wedding'?'August 2024':'October 2023',cx,cy+Math.min(w,h)*.12)
+    // Decorative lines
+    for(let i=-3;i<=3;i++){
+      ctx.beginPath();ctx.moveTo(cx+i*30-90,cy-Math.min(w,h)*.22);ctx.lineTo(cx+i*30-90,cy+Math.min(w,h)*.22)
+      ctx.strokeStyle=hexA(c1,.06);ctx.lineWidth=.5;ctx.stroke()
+    }
+  }
+
+  if(s==='print'){
+    // Editorial lookbook
+    const cols=3,rows=4,pw=w/cols,ph=h/rows
+    for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){
+      const x=c*pw,y=r*ph
+      ctx.fillStyle=hexA(c1,(r+c)%2===0?.1:.05);ctx.fillRect(x+3,y+3,pw-6,ph-6)
+    }}
+    ctx.font=`700 ${w*.08}px 'Syne',sans-serif`
+    ctx.fillStyle=hexA(c1,.7);ctx.textAlign='center';ctx.textBaseline='middle'
+    ctx.fillText('COLLECTION',w/2,h*.5);ctx.fillText('2024',w/2,h*.6)
+    ctx.font=`300 ${w*.05}px 'DM Sans',sans-serif`
+    ctx.fillStyle=hexA(c1,.4);ctx.fillText('LOOKBOOK',w/2,h*.72)
+  }
+
+  if(s==='sendoff'){
+    // Confetti / celebration
+    const cx=w/2,cy=h/2
+    for(let i=0;i<40;i++){
+      const a=((i/40)*Math.PI*2),r=20+i*2,sz=4+Math.sin(i)*.5*4
+      ctx.save();ctx.translate(cx+Math.cos(a)*r,cy+Math.sin(a*.7)*r*.8)
+      ctx.rotate(a);ctx.fillStyle=hexA(c1,.3+Math.sin(i)*.2)
+      ctx.fillRect(-sz/2,-sz/4,sz,sz/2);ctx.restore()
+    }
+    ctx.font=`800 ${w*.12}px 'Syne',sans-serif`
+    ctx.fillStyle=hexA(c1,.9);ctx.textAlign='center';ctx.textBaseline='middle'
+    ctx.fillText('Sendoff',cx,cy)
+  }
+
+  if(s==='emb'){
+    // Embroidery pattern
+    const cx=w/2,cy=h/2,nr=6,nc=8
+    const pw=w/nc,ph=h/nr
+    for(let r=0;r<nr;r++){for(let c=0;c<nc;c++){
+      ctx.save();ctx.translate(c*pw+pw/2,r*ph+ph/2)
+      ctx.strokeStyle=hexA(c1,.25);ctx.lineWidth=1.5
+      ctx.beginPath();ctx.arc(0,0,pw*.3,0,Math.PI*2);ctx.stroke()
+      ctx.beginPath();ctx.moveTo(-pw*.2,0);ctx.lineTo(pw*.2,0);ctx.stroke()
+      ctx.beginPath();ctx.moveTo(0,-pw*.2);ctx.lineTo(0,pw*.2);ctx.stroke()
+      ctx.restore()
+    }}
+    ctx.font=`700 ${w*.1}px 'Syne',sans-serif`
+    ctx.fillStyle=hexA(c1,.7);ctx.textAlign='center';ctx.textBaseline='middle'
+    ctx.fillText('EMBROIDERY',cx,cy)
+  }
+
+  // Corner label
+  ctx.font=`600 ${Math.min(w*.04,11)}px 'Syne',sans-serif`
+  ctx.fillStyle=hexA(c1,.35);ctx.textAlign='start';ctx.textBaseline='bottom'
+  ctx.fillText(item.cat.toUpperCase(),10,h-10)
+
+  ctx.restore()
+}
+
+// Category badge colors
+const CAT_STYLES={
+  Branding:{bg:'rgba(232,255,71,.15)',c:'#E8FF47',border:'rgba(232,255,71,.25)'},
+  Logo:{bg:'rgba(124,111,255,.15)',c:'#9d94ff',border:'rgba(124,111,255,.25)'},
+  Print:{bg:'rgba(255,159,67,.12)',c:'#FF9F43',border:'rgba(255,159,67,.2)'},
+  Embroidery:{bg:'rgba(78,205,196,.12)',c:'#4ECDC4',border:'rgba(78,205,196,.2)'},
+  Events:{bg:'rgba(124,111,255,.15)',c:'#9d94ff',border:'rgba(124,111,255,.25)'},
+}
+
+let currentFilter='All'
+function filterPort(cat,btn){
+  document.querySelectorAll('.fbb').forEach(b=>b.classList.remove('on'));btn.classList.add('on')
+  currentFilter=cat;buildPortfolioGrid()
+}
+
+function buildPortfolioGrid(){
+  const grid=document.getElementById('port-grid');if(!grid)return
+  const items=currentFilter==='All'?PORTFOLIO:PORTFOLIO.filter(p=>p.cat===currentFilter)
+  grid.innerHTML=''
+  items.forEach((item,i)=>{
+    const div=document.createElement('div')
+    div.className='pcard reveal'+(item.wide?' wide':'')+(item.tall?' tall':'')
+    const cs=CAT_STYLES[item.cat]||CAT_STYLES.Branding
+    div.innerHTML=`
+      <canvas class="pcard-art" id="pc-${item.id}"></canvas>
+      <div class="pcard-base-gradient"></div>
+      <div class="pcard-cat" style="background:${cs.bg};color:${cs.c};border:1px solid ${cs.border}">${item.cat}</div>
+      <div class="pcard-overlay">
+        <button class="pcard-overlay-btn">View Project →</button>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-title">${item.title}</div>
+        <div class="pcard-meta">${item.tags.map(t=>`<span class="pcard-tag">${t}</span>`).join('')}</div>
+      </div>
+      <div class="pcard-title-always">${item.title}</div>`
+    div.onclick=()=>openLB(item.id)
+    grid.appendChild(div)
+    // Render canvas art after DOM append
+    setTimeout(()=>{
+      const c=document.getElementById('pc-'+item.id)
+      if(c)drawPortfolioArt(c,item,c.offsetWidth||360,c.offsetHeight||280)
+    },10+i*20)
+  })
+  setTimeout(initReveal,50)
+}
+
+// HOME portfolio preview (3 featured items)
+function buildHomePortfolio(){
+  const el=document.getElementById('home-portfolio');if(!el)return
+  const featured=PORTFOLIO.slice(0,3)
+  el.innerHTML=''
+  featured.forEach(item=>{
+    const cs=CAT_STYLES[item.cat]||CAT_STYLES.Branding
+    const div=document.createElement('div')
+    div.className='pcard reveal'
+    div.style.height='260px'
+    div.innerHTML=`
+      <canvas class="pcard-art" id="hp-${item.id}"></canvas>
+      <div class="pcard-base-gradient"></div>
+      <div class="pcard-cat" style="background:${cs.bg};color:${cs.c};border:1px solid ${cs.border}">${item.cat}</div>
+      <div class="pcard-overlay"><button class="pcard-overlay-btn">View Project →</button></div>
+      <div class="pcard-info">
+        <div class="pcard-title">${item.title}</div>
+        <div class="pcard-meta">${item.tags.slice(0,2).map(t=>`<span class="pcard-tag">${t}</span>`).join('')}</div>
+      </div>
+      <div class="pcard-title-always">${item.title}</div>`
+    div.onclick=()=>{go('portfolio');setTimeout(()=>openLB(item.id),200)}
+    el.appendChild(div)
+    setTimeout(()=>{const c=document.getElementById('hp-'+item.id);if(c)drawPortfolioArt(c,item,c.offsetWidth||360,260)},50)
+  })
+}
+
+// ══════════════════════════════════════
+// LIGHTBOX
+// ══════════════════════════════════════
+let lbIdx=0,lbItems=PORTFOLIO
+
+function openLB(id){
+  lbItems=currentFilter==='All'?PORTFOLIO:PORTFOLIO.filter(p=>p.cat===currentFilter)
+  lbIdx=lbItems.findIndex(p=>p.id===id)
+  if(lbIdx<0)lbIdx=0
+  renderLB()
+  document.getElementById('lightbox').classList.add('open')
+  document.body.style.overflow='hidden'
+}
+
+function closeLB(){
+  document.getElementById('lightbox').classList.remove('open')
+  document.body.style.overflow=''
+}
+
+function prevLB(){lbIdx=(lbIdx-1+lbItems.length)%lbItems.length;renderLB()}
+function nextLB(){lbIdx=(lbIdx+1)%lbItems.length;renderLB()}
+
+function renderLB(){
+  const item=lbItems[lbIdx]
+  document.getElementById('lb-title').textContent=item.title
+  document.getElementById('lb-desc').textContent=item.desc
+  const cs=CAT_STYLES[item.cat]||CAT_STYLES.Branding
+  document.getElementById('lb-tags').innerHTML=item.tags.map(t=>`<span style="background:${cs.bg};color:${cs.c};border:1px solid ${cs.border};border-radius:100px;padding:4px 12px;font-size:.75rem;font-weight:500">${t}</span>`).join('')
+  const c=document.getElementById('lb-canvas')
+  c.style.opacity='0';c.style.transition='opacity .3s ease'
+  setTimeout(()=>{
+    drawPortfolioArt(c,item,c.offsetWidth||860,500)
+    c.style.opacity='1'
+  },50)
+}
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('open'))return
+  if(e.key==='ArrowLeft')prevLB()
+  if(e.key==='ArrowRight')nextLB()
+  if(e.key==='Escape')closeLB()
+})
+
+// ══════════════════════════════════════
+// CONTACT FORM
+// ══════════════════════════════════════
+function subContact(e){
+  e.preventDefault()
+  const btn=document.getElementById('csub')
+  btn.innerHTML='<span class="spinner"></span>Sending...'
+  btn.disabled=true
+  setTimeout(()=>{
+    document.getElementById('cform').style.display='none'
+    document.getElementById('csuccess').style.display='block'
+    window.scrollTo({top:0,behavior:'smooth'})
+  },1200)
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  initHeroCanvas()
+  initHeroScenes()
+  initReveal()
+  buildHomePortfolio()
+
+  // Trigger scroll reveal check
+  setTimeout(checkReveal,300)
+})
+
+// Rebuild canvas art on resize
+let resizeTimer
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer)
+  resizeTimer=setTimeout(()=>{
+    const page=document.querySelector('.page.on')?.id
+    if(page==='page-portfolio')buildPortfolioGrid()
+    if(page==='page-home')buildHomePortfolio()
+  },200)
+})
+</script>
+</body>
+</html>
